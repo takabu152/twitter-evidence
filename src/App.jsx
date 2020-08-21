@@ -14,7 +14,7 @@ const App = () => {
 
   return (
     <Router>
-      <Route path="/">
+      <Route path="/login">
         <Login count={count} setCount = {setCount} />
 			</Route>
       <Route path="/mainmenu">
