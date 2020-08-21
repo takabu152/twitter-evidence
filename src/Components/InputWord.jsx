@@ -21,7 +21,7 @@ const InputWord = (props) => {
             });
 
             //stateに入れる。
-            setSearchKeyWord(querySnapshot.docs);
+            //setSearchKeyWord(querySnapshot.docs);
 
           })
           .catch(function(error) {
@@ -34,14 +34,14 @@ const InputWord = (props) => {
   // stateの変数をいれる事で、それが更新された時だけ実行されるように設定できる。
   useEffect(()=>{
 
-    Firebase.auth().onAuthStateChanged(async function(user) {
-      if (user) {
-        await SearchWords(user.uid);
-      } else {
-        // User is signed out.
-        window.location.href = "./Login" ;
-      }
-    });
+    // Firebase.auth().onAuthStateChanged(async function(user) {
+    //   if (user) {
+    //     await SearchWords(user.uid);
+    //   } else {
+    //     // User is signed out.
+    //     window.location.href = "./Login" ;
+    //   }
+    // });
     console.log('useEffectが実行されました')
   },[])
   // Firebase.auth().onAuthStateChanged(function(user) {

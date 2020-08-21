@@ -4,7 +4,7 @@ import Login from './Components/Login';
 import MainMenu from './Components/MainMenu';
 import InputWord from './Components/InputWord';
 import TimeLineCheck from './Components/TimeLineCheck';
-import axios from 'axios';
+//import axios from 'axios';
 
 //#region App
 const App = () => {
