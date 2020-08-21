@@ -5,15 +5,15 @@ var db = Firebase.firestore();
 
 const TimeLineCheck = (props) => {
 
-  
-
   const [TweetCollections, setTweetCollections] = useState(null);
 
   const getTweetFromFirestore = async (uid,q,twitteruser) => {
     const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
     const result = await axios.get(requestUrl);
-    setTweetCollections(result);
-    console.log(TweetCollections);
+    console.log(result.data);
+    setTweetCollections(result.data);
+
+    //console.log(TweetCollections);
     // setTodoList(todoArray.data);
     // return todoArray.data;
   }
@@ -23,7 +23,6 @@ const TimeLineCheck = (props) => {
     Firebase.auth().onAuthStateChanged(async (user) => {
       
       if(user) {
-
         //検索キーワード一覧の取得
         const SearchKeyWordsSnapshot = await db.collection('SearchKeyWord')
         .where('uid', '==', user.uid)
