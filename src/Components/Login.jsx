@@ -23,9 +23,6 @@ const Login = (props) =>{
             .where('uid', '==', uid)
             .get();
 
-    console.log(UsersSnapshot.empty);
-    console.log(UsersSnapshot);
-
     //データがあったら一度削除
     if(UsersSnapshot.empty === false)
     {

@@ -1,29 +1,53 @@
 import React, { useState } from 'react';
 import Firebase from '../Firebase';
 import axios from 'axios';
+var db = Firebase.firestore();
 
 const TimeLineCheck = (props) => {
 
+  
+
   const [TweetCollections, setTweetCollections] = useState(null);
 
-  const getTweetFromFirestore = async (user,q,twitteruser) => {
-    const requestUrl = 'http://localhost:5000/twitterevidence-e3116/us-central1/api/gettweet/uid/'+ user.uid +'/q/' + q + '/u/'+twitteruser;
+  const getTweetFromFirestore = async (uid,q,twitteruser) => {
+    const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
     const result = await axios.get(requestUrl);
     setTweetCollections(result);
     console.log(TweetCollections);
     // setTodoList(todoArray.data);
     // return todoArray.data;
-    return 'A';
   }
 
   const SearchTwitterTimeLine = () =>{
     //Firebaseイベント
-    Firebase.auth().onAuthStateChanged( (user) => {
+    Firebase.auth().onAuthStateChanged(async (user) => {
       
       if(user) {
-        const q = 'w';
-        const twitteruser = '@takabu152';
-        const data = getTweetFromFirestore(user,q,twitteruser);
+
+        //検索キーワード一覧の取得
+        const SearchKeyWordsSnapshot = await db.collection('SearchKeyWord')
+        .where('uid', '==', user.uid)
+        .get();
+
+        //Twitterユーザー名の取得
+        const UsersSnapshot = await db.collection('Users')
+            .where('uid', '==', user.uid)
+            .get();
+
+        const TwitterName = UsersSnapshot.docs[0].data().twittername;
+        console.log(TwitterName);
+        //検索キーワードの内容をループして処理する。
+        SearchKeyWordsSnapshot.docs.map(async x => {
+          console.log(x.data().searchkeyword)
+          await getTweetFromFirestore(user.uid,x.data().searchkeyword,'@'+TwitterName);
+          //const data =await getTweetFromFirestore(user.uid,x.data(),twitteruser);
+        });
+
+        //const q = 'w';
+        //const twitteruser = '@takabu152';
+        //const data = getTweetFromFirestore(user.uid,q,twitteruser);
+        
+        
         //Twitterの情報を検索して、Firebaseの内容を取得するAPIを実行
 
         // h1.innerText   = 'Login Complete!';
@@ -31,6 +55,8 @@ const TimeLineCheck = (props) => {
         //Twitterのアクセストークンの設定
         // twitter_token = localStorage.getItem('twitter_token');
         // twitter_secret = localStorage.getItem('twitter_secret');
+
+        //firebaseの登録結果を取得して表示させる
         
       }
       else {
