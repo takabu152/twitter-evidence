@@ -8,7 +8,8 @@ const TimeLineCheck = (props) => {
   const [TweetCollections, setTweetCollections] = useState(null);
 
   const getTweetFromFirestore = async (uid,q,twitteruser) => {
-    const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
+    //const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
+    const requestUrl = 'http://localhost:5000/twitterevidence-e3116/us-central1/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
     const result = await axios.get(requestUrl);
     console.log(result.data);
     setTweetCollections(result.data);
@@ -77,7 +78,11 @@ const TimeLineCheck = (props) => {
         {
           TweetCollections?.map((x, index) =>
             <li key={index} id={x.id}>
-              <p>内容：{x.data.text}</p>
+              <img src={x.profileimageurl} alt=""/>
+              <p>名前：{x.username}</p>
+              <p>UID:{x.uid}</p>
+              <p>スクリーンネーム：{x.userscreenname}</p>
+              <p>内容：{x.text}</p>
             </li>
           )
         }
