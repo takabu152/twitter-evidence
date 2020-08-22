@@ -1,4 +1,8 @@
 import React, { useState } from 'react';
+
+import { Paper } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+
 import Firebase from '../Firebase';
 
 //#region MainMenu画面（メニュー画面）
@@ -14,8 +18,8 @@ const MainMenu = (props) => {
     let info = document.querySelector('#info');
 
     if(user) {
-      h1.innerText   = 'Login Complete!';
-      info.innerHTML = `${user.displayName}さんがログインしました<br>` + `(${user.uid})`;
+      //h1.innerText   = 'Login Complete!';
+      //info.innerHTML = `${user.displayName}さんがログインしました<br>` + `(${user.uid})`;
       //Twitterのアクセストークンの設定
       twitter_token = localStorage.getItem('twitter_token');
       twitter_secret = localStorage.getItem('twitter_secret');
@@ -57,11 +61,28 @@ const MainMenu = (props) => {
       <title>Firebase Auth for Twitter</title>
     </head>
     <body>
-      <h1>...Please wait</h1>
-      <div id="info"></div>
-      <input type="button" value="追跡ワード登録" onClick={InputWordBtn} />
-      <input type="button" value="証拠状況の確認" onClick={TimeLineCheckBtn}/>
-      <input type="button" value="Logout" onClick={LogoutBtn}/>
+      <Paper>
+        <div class = "box">
+          <h1>Main Menu</h1>
+          <div id="info"></div>
+          <div>
+            <Button id="searchword_button" variant="outlined" color="primary"  onClick={InputWordBtn}>
+              検索ワード登録
+            </Button>    
+          </div>
+          <div>
+            <Button id="timeline_button" variant="outlined" color="primary"  onClick={TimeLineCheckBtn}>
+              TimeLine 収集
+            </Button>
+          </div>
+          <div>
+            <Button id="logout_button" variant="outlined" color="secondary" onClick={LogoutBtn}>
+              Logout
+            </Button>
+          </div>
+        </div>
+      </Paper>
+      
       <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase-app.js"></script>
       <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase-auth.js"></script>
       <script src="https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth__ja.js"></script>

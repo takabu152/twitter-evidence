@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+
+import { Paper } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import { IconButton } from '@material-ui/core';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
+import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
+
 import Firebase from '../Firebase';
 import axios from 'axios';
 var db = Firebase.firestore();
@@ -7,16 +14,45 @@ const TimeLineCheck = (props) => {
 
   const [TweetCollections, setTweetCollections] = useState(null);
 
-  const getTweetFromFirestore = async (uid,q,twitteruser) => {
-    const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
-    //const requestUrl = 'http://localhost:5000/twitterevidence-e3116/us-central1/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser;
+  // API 呼び出し
+  const getTweetFromFirestore = async (uid,q,twitteruser,maxid) => {
+    const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser+'/maxid/'+maxid;
+    //const requestUrl = 'http://localhost:5000/twitterevidence-e3116/us-central1/api/gettweet/uid/'+ uid +'/q/' + q + '/u/'+twitteruser+'/maxid/'+maxid;
     const result = await axios.get(requestUrl);
-    console.log(result.data);
+    console.log(result);
     setTweetCollections(result.data);
 
     //console.log(TweetCollections);
     // setTodoList(todoArray.data);
     // return todoArray.data;
+  }
+
+  //TweetDataダウンロード
+  const DownloadTweetData = () => {
+
+    Firebase.auth().onAuthStateChanged(async (user) => {
+      
+      if(user) {
+        const requestUrl = 'https://us-central1-twitterevidence-e3116.cloudfunctions.net/api/csvdownload/uid/'+ user.uid ;
+        //const requestUrl = 'http://localhost:5000/twitterevidence-e3116/us-central1/api/csvdownload/uid/'+ user.uid ;
+        const result = await axios.get(requestUrl);
+        console.log(result.data);
+            // UTF BOM
+        var bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+        // リンククリエイト
+        var downloadLink = document.createElement("a");
+        downloadLink.download =  "twweetdata.csv";
+        // ファイル情報設定
+        downloadLink.href = URL.createObjectURL(new Blob([bom, result.data], { type: "text/csv" }));
+        downloadLink.dataset.downloadurl = ["text/csv", downloadLink.download, downloadLink.href].join(":");
+        // イベント実行
+        downloadLink.click();
+      }
+      else {
+        window.location.href = "./Login" ;
+      }
+    });
+
   }
 
   const SearchTwitterTimeLine = () =>{
@@ -35,11 +71,12 @@ const TimeLineCheck = (props) => {
             .get();
 
         const TwitterName = UsersSnapshot.docs[0].data().twittername;
-        console.log(TwitterName);
+        //console.log(TwitterName);
         //検索キーワードの内容をループして処理する。
+        
         SearchKeyWordsSnapshot.docs.map(async x => {
           console.log(x.data().searchkeyword)
-          await getTweetFromFirestore(user.uid,x.data().searchkeyword,'@'+TwitterName);
+          await getTweetFromFirestore(user.uid,x.data().searchkeyword,'@'+TwitterName,x.data().maxid);
           //const data =await getTweetFromFirestore(user.uid,x.data(),twitteruser);
         });
 
@@ -63,7 +100,12 @@ const TimeLineCheck = (props) => {
         window.location.href = "./Login" ;
       }
     });
-  }
+  };
+
+    // メニュークリック
+    const btnMenuClick = () => {
+      window.location.href = "./MainMenu" ;
+    };
 
   //#region InputWordの画面
   return (
@@ -73,20 +115,62 @@ const TimeLineCheck = (props) => {
       <title>Firebase Auth for Twitter</title>
     </head>
     <body>
-      <input type="button" value="Twitterデータを取得し、表示する" onClick={SearchTwitterTimeLine}/>
-      <ul>
-        {
-          TweetCollections?.map((x, index) =>
-            <li key={index} id={x.id}>
-              <img src={x.profileimageurl} alt=""/>
-              <p>名前：{x.username}</p>
-              <p>UID:{x.uid}</p>
-              <p>スクリーンネーム：{x.userscreenname}</p>
-              <p>内容：{x.text}</p>
-            </li>
-          )
-        }
-      </ul>
+      
+    <Paper>
+      <div class="box">
+        <h1>TimeLine収集</h1>
+        <div>
+        <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<SentimentSatisfiedAltIcon />}
+            onClick={SearchTwitterTimeLine}
+            style={{width:"80%",marginBottom:"10px"}}
+          >
+            データ収集
+          </Button>
+          {/* <input type="button" value="Twitterデータを取得し、表示する" onClick={SearchTwitterTimeLine}/> */}
+        </div>
+        <div>登録内容</div>
+        <ul>
+          {
+            TweetCollections?.map((x, index) =>
+              <li key={index} id={x.id}>
+                <img src={x.profileimageurl} alt=""/>
+                <p>名前：{x.username}</p>
+                <p>UID:{x.uid}</p>
+                <p>スクリーンネーム：{x.userscreenname}</p>
+                <p>内容：{x.text}</p>
+              </li>
+            )
+          }
+        </ul>
+        <div>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<CloudDownloadIcon />}
+            onClick={DownloadTweetData}
+            style={{width:"80%",marginBottom:"10px"}}
+          >
+            Download
+          </Button>
+            {/* <input id="download" type="button" value="ダウンロード" download="tweetdata.csv" onClick={DownloadTweetData}/> */}
+        </div>
+        
+        <div>
+          <Button style={{width:"80%",marginBottom:"10px"}}  variant="outlined" color="primary"  onClick={btnMenuClick}>
+            Main Menu
+          </Button>
+          {/* <input type="button" value="メニューに戻る" onClick={btnMenuClick}/> */}
+        </div>
+      </div>
+    </Paper>
+      
+      
+
+
+
       <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase-app.js"></script>
       <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase-auth.js"></script>
       <script src="https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth__ja.js"></script>

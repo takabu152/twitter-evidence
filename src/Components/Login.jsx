@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import { Paper } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+
 import Firebase from '../Firebase'
 var db = Firebase.firestore();
 
@@ -83,15 +86,24 @@ const Login = (props) =>{
     <>
     <head>
       <meta charset="utf-8" />
-      <title>Firebase Auth for Twitter</title>
+      <title>Twitter Evidence</title>
       <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
     </head>
     <body>
-      <h1>Firebase Auth for Twitter</h1>
-      <div id="firebaseui-auth-container"></div>
-      <input type="button" id="twitter_login_button" value="Twitterログイン" onClick={btnTwitterLogin} />
-      <input type="button" id="counter_button" value="CountUp" onClick={subSetCount}/>
-      <div>{props.count}</div>
+
+      <Paper >
+        <div class="box">
+          <h1>Twitter Evidence</h1>
+          <div id="firebaseui-auth-container"></div>
+
+          <Button variant="outlined" color="primary" id="twitter_login_button" onClick={btnTwitterLogin}>
+            Login
+          </Button>
+        </div>
+      </Paper>
       <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase-app.js"></script>
       <script src="https://www.gstatic.com/firebasejs/5.8.1/firebase-auth.js"></script>
       <script src="https://www.gstatic.com/firebasejs/ui/3.5.2/firebase-ui-auth__ja.js"></script>
