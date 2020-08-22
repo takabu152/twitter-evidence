@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Paper } from '@material-ui/core';
 import { Button } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import SentimentSatisfiedAltIcon from '@material-ui/icons/SentimentSatisfiedAlt';
 
@@ -135,13 +137,25 @@ const TimeLineCheck = (props) => {
         <ul>
           {
             TweetCollections?.map((x, index) =>
-              <li key={index} id={x.id}>
-                <img src={x.profileimageurl} alt=""/>
-                <p>名前：{x.username}</p>
-                <p>UID:{x.uid}</p>
-                <p>スクリーンネーム：{x.userscreenname}</p>
-                <p>内容：{x.text}</p>
-              </li>
+              <div>
+                <Card style={{marginBottom:"10px"}}>
+                  <CardContent>
+                    <img src={x.profileimageurl} alt=""/>
+                    <p>名前：{x.username}</p>
+                    <p>UID:{x.uid}</p>
+                    <p>スクリーンネーム：{x.userscreenname}</p>
+                    <p>内容：{x.text}</p>
+                  </CardContent>
+                </Card>
+                
+                {/* <li key={index} id={x.id}>
+                  <img src={x.profileimageurl} alt=""/>
+                  <p>名前：{x.username}</p>
+                  <p>UID:{x.uid}</p>
+                  <p>スクリーンネーム：{x.userscreenname}</p>
+                  <p>内容：{x.text}</p>
+                </li> */}
+              </div>
             )
           }
         </ul>
